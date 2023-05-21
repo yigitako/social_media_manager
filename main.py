@@ -44,7 +44,7 @@ class SocialNetwork(SocialNetworkGraph):
         """Returns users with no friend at all"""
         return [usr for usr in self.social_NW.keys() if len(self.social_NW[usr]) < 1]
 
-    def less_friend(self) -> str:
+    def less_friend(self) -> tuple:
         """Returns users with friends fewer friends
         stackoverflow.com/questions/3282823/get-the-key-corresponding-to-the-minimum-value-within-a-dictionary"""
         min_val = min(filter(lambda m_val: m_val != 0, map(len, self.social_NW.values())))
@@ -67,11 +67,12 @@ class SocialNetwork(SocialNetworkGraph):
         pass
 
 
-class MainProgram(SocialNetworkGraph):
+class MainProgram(SocialNetwork, SocialNetworkGraph):
     def main(self):
-        self.admin_name = input("Please enter the admin name to proceed.")
         """User interactions | python 3.10 needed for this program to run"""
+        usr_inp = None
         print(f"{'_' * 10}SocialMediaManager{'_' * 10}\n"
+              f"| 0: exit from the program           |\n"
               f"| 1: Load the database               |\n"
               f"| 2: Add user to the database        |\n"
               f"| 3: Remove user from the database   |\n"
@@ -82,11 +83,39 @@ class MainProgram(SocialNetworkGraph):
               f"| 8: Relation diagram in database    |\n"
               f"| 9: Recommend friend for the user   |\n"
               f"{'_' * 38}")
-        usr_inp = input(f'{self.admin_name}@{self.file_name}$ ')
-        match usr_inp:
-            case "1":
-                pass
+        while usr_inp != 0:
+            try:
+                usr_inp = input(f'{self.admin_name}@{self.file_name}$ ')
+                match usr_inp:
+                    case "1":
+                        self.load_file()
+                    case "2":
+                        add = input("please enter the user you want to add >")
+                        self.add_user(add)
+                        print("the user {add} has been added to the system")
+                    case "3":
+                        rmv = input("please enter the user you want to remove >")
+                        self.remove_user(rmv)
+                        print(f'the user {rmv} has been removed')
+                    case "4":
+                        print(self.lonely_users())
+                    case "5":
+                        tfrnd = input("please enter the user name to see all friends >")
+                        print(f'{tfrnd} has/have {self.total_friends(tfrnd)} friends')
+                    case "6":
+                        print(self.display_network(self.social_NW))
+                        self.display_network()
+                    case "7":
+                        self.less_friend()
+                    case "8":
+                        rel = input("please enter the user name to see the relationship in the system ")
+                        print(self.show_relations(rel))
+                    case "9":
+                        pass
+            except:
+                print('something went wrong! ')
 
 
-if __name__ == "__main__":
-    MainProgram("social_nw.txt").main()
+if __name__ == '__main__':
+    x = MainProgram("social_nw.txt")  # Pass the file name or None if not applicable
+    x.main()
